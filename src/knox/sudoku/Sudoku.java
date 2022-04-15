@@ -1,8 +1,22 @@
 package knox.sudoku;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.Scanner;
 
+/**
+ * 
+ * This is the MODEL class. This class knows all about the
+ * underlying state of the Sudoku game. We can VIEW the data
+ * stored in this class in a variety of ways, for example,
+ * using a simple toString() method, or using a more complex
+ * GUI (Graphical User Interface) such as the SudokuGUI 
+ * class that is included.
+ * 
+ * @author jaimespacco
+ *
+ */
 public class Sudoku {
 	int[][] board = new int[9][9];
 	
@@ -19,6 +33,11 @@ public class Sudoku {
 	public boolean isLegal(int row, int col, int val) {
 		// TODO: check if it's legal to put val at row, col
 		return true;
+	}
+	
+	public Collection<Integer> getLegalValues(int row, int col) {
+		// TODO: return only the legal values that can be stored at the given row, col
+		return new LinkedList<>();
 	}
 	
 /**
@@ -46,10 +65,19 @@ etc
 		}
 	}
 	
+	/**
+	 * Return which 3x3 grid this row is contained in.
+	 * 
+	 * @param row
+	 * @return
+	 */
 	public int get3x3row(int row) {
 		return row / 3;
 	}
 	
+	/**
+	 * Convert this Sudoku board into a String
+	 */
 	public String toString() {
 		String result = "";
 		for (int r=0; r<9; r++) {
@@ -83,7 +111,7 @@ etc
 		}
 	}
 
-	private boolean gameOver() {
+	public boolean gameOver() {
 		// TODO check that there are still open spots
 		return false;
 	}
