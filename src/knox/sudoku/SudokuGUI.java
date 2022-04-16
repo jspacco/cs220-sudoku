@@ -22,6 +22,22 @@ import javax.swing.JPanel;
 import javax.swing.WindowConstants;
 
 
+/**
+ * 
+ * This is the GUI (Graphical User Interface) for Sudoku.
+ * 
+ * It extends JFrame, which means that it is a subclass of JFrame.
+ * The JFrame is the main class, and owns the JMenuBar, which is 
+ * the menu bar at the top of the screen with the File and Help 
+ * and other menus.
+ * 
+ * 
+ * One of the most important instance variables is a JCanvas, which is 
+ * kind of like the canvas that we will paint all of the grid squared onto.
+ * 
+ * @author jaimespacco
+ *
+ */
 public class SudokuGUI extends JFrame {
 	
 	private Sudoku sudoku;
@@ -36,16 +52,21 @@ public class SudokuGUI extends JFrame {
     private int currentRow = -1;
     private int currentCol = -1;
     
+    // the current guessed number for currentRow and currentCol
+    private int guess = -1;
+    
     // figuring out how big to make each button
     // honestly not sure how much detail is needed here with margins
 	protected final int MARGIN_SIZE = 5;
     protected final int DOUBLE_MARGIN_SIZE = MARGIN_SIZE*2;
     protected int squareSize = 90;
     private int width = DOUBLE_MARGIN_SIZE + squareSize * numCols;    		
-    private int height = DOUBLE_MARGIN_SIZE + squareSize * numRows;    		
+    private int height = DOUBLE_MARGIN_SIZE + squareSize * numRows;  
+    
+    private static Font FONT = new Font("Verdana", Font.BOLD, 40);
     
     // the canvas is a panel that gets drawn on
-    private JPanel canvas;
+    private JPanel panel;
 
     // this is the menu bar at the top that owns all of the buttons
     private JMenuBar menuBar;
@@ -67,7 +88,10 @@ public class SudokuGUI extends JFrame {
 			//System.out.printf("row %d, col %d, %s\n", row, col, e);
 			JButton button = (JButton)e.getSource();
 			
-			if (sudoku.isBlank(row, col)) {
+			if (row == currentRow && col == currentCol) {
+				currentRow = -1;
+				currentCol = -1;
+			} else if (sudoku.isBlank(row, col)) {
 				// we can try to enter a value in a 
 				currentRow = row;
 				currentCol = col;
@@ -102,12 +126,23 @@ public class SudokuGUI extends JFrame {
      * to match any changes to the model
      */
     private void update() {
+    	this.setFocusable(true);
     	for (int row=0; row<numRows; row++) {
     		for (int col=0; col<numCols; col++) {
     			if (row == currentRow && col == currentCol) {
     				// draw this grid square special!
     				// this is the grid square we are trying to enter value into
-    				setText(row, col, "_");
+    				Color originalForeground = buttons[row][col].getForeground();
+    				Color originalBackground = buttons[row][col].getBackground();
+    				buttons[row][col].setForeground(Color.RED);
+    				buttons[row][col].setBackground(Color.CYAN);
+    				if (guess > -1) {
+    					setText(row, col, guess+"");
+    				} else {
+    					setText(row, col, "_");
+    				}
+    				buttons[row][col].setForeground(originalForeground);
+    				buttons[row][col].setBackground(originalBackground);
     			} else {
 	    			int val = sudoku.get(row, col);
 	    			if (val == 0) {
@@ -216,7 +251,15 @@ public class SudokuGUI extends JFrame {
     	this.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
-				System.out.println(e.getKeyChar());
+				char key = e.getKeyChar();
+				System.out.println(key);
+				if (Character.isDigit(key)) {
+					System.out.println(key);
+					if (currentRow > -1 && currentCol > -1) {
+						guess = Integer.parseInt(key + "");
+					}
+				}
+				
 			}
 		});
     }
@@ -231,13 +274,14 @@ public class SudokuGUI extends JFrame {
 
         this.setSize(width, height);
         
-        canvas = new JPanel();
+        // the JPanel where everything gets painted
+        panel = new JPanel();
         // set up a 9x9 grid layout, since sudoku boards are 9x9
-        canvas.setLayout(new GridLayout(9, 9));
+        panel.setLayout(new GridLayout(9, 9));
         // set the preferred size
         // If we don't do this, often the window will be minimized
         // This is a weird quirk of Java GUIs
-        canvas.setPreferredSize(new Dimension(width, height));
+        panel.setPreferredSize(new Dimension(width, height));
         
         // This sets up 81 JButtons (9 rows * 9 columns)
         for (int r=0; r<numRows; r++) {
@@ -245,12 +289,12 @@ public class SudokuGUI extends JFrame {
         		JButton b = new JButton();
         		b.setPreferredSize(new Dimension(squareSize, squareSize));
         		
-        		b.setFont(new Font("Verdana", Font.BOLD, 40));
+        		b.setFont(FONT);
         		buttons[r][c] = b;
         		// add the button to the canvas
         		// the layout manager (the 9x9 GridLayout from a few lines earlier)
         		// will make sure we get a 9x9 grid of these buttons
-        		canvas.add(b);
+        		panel.add(b);
 
         		// thicker borders in some places
         		// sudoku boards use 3x3 sub-grids
@@ -281,7 +325,7 @@ public class SudokuGUI extends JFrame {
         	}
         }
         
-        this.getContentPane().add(canvas, BorderLayout.CENTER);
+        this.getContentPane().add(panel, BorderLayout.CENTER);
         this.setPreferredSize(new Dimension(width, height));
         this.setResizable(false);
         this.pack();

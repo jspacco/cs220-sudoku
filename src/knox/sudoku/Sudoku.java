@@ -117,7 +117,7 @@ etc
 	}
 
 	public boolean isBlank(int row, int col) {
-		return board[row][col] > 0;
+		return board[row][col] == 0;
 	}
 
 }
