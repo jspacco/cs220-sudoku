@@ -64,6 +64,8 @@ public class SudokuGUI extends JFrame {
     private int height = DOUBLE_MARGIN_SIZE + squareSize * numRows;  
     
     private static Font FONT = new Font("Verdana", Font.BOLD, 40);
+    private static Color FONT_COLOR = Color.BLACK;
+    private static Color BACKGROUND_COLOR = Color.GRAY;
     
     // the canvas is a panel that gets drawn on
     private JPanel panel;
@@ -73,6 +75,32 @@ public class SudokuGUI extends JFrame {
     
     // 2D array of buttons; each sudoku square is a button
     private JButton[][] buttons = new JButton[numRows][numCols];
+    
+    private class MyKeyListener extends KeyAdapter {
+    	public final int row;
+    	public final int col;
+    	public final Sudoku sudoku;
+    	
+    	MyKeyListener(int row, int col, Sudoku sudoku){
+    		this.sudoku = sudoku;
+    		this.row = row;
+    		this.col = col;
+    	}
+    	
+    	public void keyTyped(KeyEvent e) {
+			char key = e.getKeyChar();
+			//System.out.println(key);
+			if (Character.isDigit(key)) {
+				// use ascii values to convert chars to ints
+				int digit = key - '0';
+				System.out.println(key);
+				if (currentRow == row && currentCol == col) {
+					sudoku.set(row, col, digit);
+				}
+				update();
+			}
+		}
+    }
     
     private class ButtonListener implements ActionListener {
     	public final int row;
@@ -126,24 +154,16 @@ public class SudokuGUI extends JFrame {
      * to match any changes to the model
      */
     private void update() {
-    	this.setFocusable(true);
     	for (int row=0; row<numRows; row++) {
     		for (int col=0; col<numCols; col++) {
-    			if (row == currentRow && col == currentCol) {
+    			if (row == currentRow && col == currentCol && sudoku.isBlank(row, col)) {
     				// draw this grid square special!
     				// this is the grid square we are trying to enter value into
-    				Color originalForeground = buttons[row][col].getForeground();
-    				Color originalBackground = buttons[row][col].getBackground();
     				buttons[row][col].setForeground(Color.RED);
     				buttons[row][col].setBackground(Color.CYAN);
-    				if (guess > -1) {
-    					setText(row, col, guess+"");
-    				} else {
-    					setText(row, col, "_");
-    				}
-    				buttons[row][col].setForeground(originalForeground);
-    				buttons[row][col].setBackground(originalBackground);
+    				setText(row, col, "_");
     			} else {
+    				buttons[row][col].setForeground(FONT_COLOR);
 	    			int val = sudoku.get(row, col);
 	    			if (val == 0) {
 	    				setText(row, col, "");
@@ -153,6 +173,7 @@ public class SudokuGUI extends JFrame {
     			}
     		}
     	}
+    	repaint();
     }
     
 	
@@ -248,6 +269,28 @@ public class SudokuGUI extends JFrame {
     
     
     private void createKeyboardHandlers() {
+    	for (int r=0; r<buttons.length; r++) {
+    		for (int c=0; c<buttons[r].length; c++) {
+    			buttons[r][c].addKeyListener(new MyKeyListener(r, c, sudoku));
+    			/*
+    			buttons[r][c].addKeyListener(new KeyAdapter() {
+    				@Override
+    				public void keyTyped(KeyEvent e) {
+    					char key = e.getKeyChar();
+    					System.out.println(key);
+    					if (Character.isDigit(key)) {
+    						System.out.println(key);
+    						if (currentRow > -1 && currentCol > -1) {
+    							guess = Integer.parseInt(key + "");
+    						}
+    					}
+    					
+    				}
+    			});
+    			*/
+    		}
+    	}
+    	/*
     	this.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyTyped(KeyEvent e) {
@@ -262,6 +305,7 @@ public class SudokuGUI extends JFrame {
 				
 			}
 		});
+		*/
     }
     
     public SudokuGUI() {
@@ -290,6 +334,8 @@ public class SudokuGUI extends JFrame {
         		b.setPreferredSize(new Dimension(squareSize, squareSize));
         		
         		b.setFont(FONT);
+        		b.setForeground(FONT_COLOR);
+        		b.setBackground(BACKGROUND_COLOR);
         		buttons[r][c] = b;
         		// add the button to the canvas
         		// the layout manager (the 9x9 GridLayout from a few lines earlier)
