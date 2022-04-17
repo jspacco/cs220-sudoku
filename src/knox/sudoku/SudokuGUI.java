@@ -160,6 +160,8 @@ public class SudokuGUI extends JFrame {
     				// draw this grid square special!
     				// this is the grid square we are trying to enter value into
     				buttons[row][col].setForeground(Color.RED);
+    				// I can't figure out how to change the background color of a grid square, ugh
+    				// Maybe I should have used JLabel instead of JButton?
     				buttons[row][col].setBackground(Color.CYAN);
     				setText(row, col, "_");
     			} else {
