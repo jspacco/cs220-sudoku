@@ -166,6 +166,7 @@ public class SudokuGUI extends JFrame {
     				setText(row, col, "_");
     			} else {
     				buttons[row][col].setForeground(FONT_COLOR);
+    				buttons[row][col].setBackground(BACKGROUND_COLOR);
 	    			int val = sudoku.get(row, col);
 	    			if (val == 0) {
 	    				setText(row, col, "");
@@ -277,40 +278,8 @@ public class SudokuGUI extends JFrame {
     	for (int r=0; r<buttons.length; r++) {
     		for (int c=0; c<buttons[r].length; c++) {
     			buttons[r][c].addKeyListener(new MyKeyListener(r, c, sudoku));
-    			/*
-    			buttons[r][c].addKeyListener(new KeyAdapter() {
-    				@Override
-    				public void keyTyped(KeyEvent e) {
-    					char key = e.getKeyChar();
-    					System.out.println(key);
-    					if (Character.isDigit(key)) {
-    						System.out.println(key);
-    						if (currentRow > -1 && currentCol > -1) {
-    							guess = Integer.parseInt(key + "");
-    						}
-    					}
-    					
-    				}
-    			});
-    			*/
     		}
     	}
-    	/*
-    	this.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-				char key = e.getKeyChar();
-				System.out.println(key);
-				if (Character.isDigit(key)) {
-					System.out.println(key);
-					if (currentRow > -1 && currentCol > -1) {
-						guess = Integer.parseInt(key + "");
-					}
-				}
-				
-			}
-		});
-		*/
     }
     
     public SudokuGUI() {
