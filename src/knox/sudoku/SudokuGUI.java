@@ -51,9 +51,7 @@ public class SudokuGUI extends JFrame {
     // the current row and column we are potentially putting values into
     private int currentRow = -1;
     private int currentCol = -1;
-    
-    // the current guessed number for currentRow and currentCol
-    private int guess = -1;
+
     
     // figuring out how big to make each button
     // honestly not sure how much detail is needed here with margins
@@ -63,6 +61,7 @@ public class SudokuGUI extends JFrame {
     private int width = DOUBLE_MARGIN_SIZE + squareSize * numCols;    		
     private int height = DOUBLE_MARGIN_SIZE + squareSize * numRows;  
     
+    // for lots of fun, too much fun really, try "Wingdings"
     private static Font FONT = new Font("Verdana", Font.BOLD, 40);
     private static Color FONT_COLOR = Color.BLACK;
     private static Color BACKGROUND_COLOR = Color.GRAY;
@@ -132,6 +131,7 @@ public class SudokuGUI extends JFrame {
 			} else {
 				// TODO: error dialog letting the user know that they cannot enter values
 				// where a value has already been placed
+				JOptionPane.showMessageDialog(null, "Can't enter a value here");
 			}
 			
 			update();
@@ -188,11 +188,14 @@ public class SudokuGUI extends JFrame {
     	JMenu file = new JMenu("File");
         menuBar.add(file);
         
+        // anonymous inner class
+        // basically, immediately create a class that implements actionlistener
+        // and then give it the given actionPerformed method.
         addToMenu(file, "New Game", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 sudoku.load("easy1.txt");
-                repaint();
+                update();
             }
         });
         
@@ -207,7 +210,7 @@ public class SudokuGUI extends JFrame {
             		    "TODO: save the current game to a file!\n"
             		    + "HINT: Check the Util.java class for helpful methods"
             		    + "HINT: Check out JFileChooser");
-                repaint();
+                update();
             }
         });
         
@@ -222,7 +225,7 @@ public class SudokuGUI extends JFrame {
             		    "TODO: load a saved game from a file\n"
             		    + "HINT: Check the Util.java class for helpful methods\n"
             		    + "HINT: Check out JFileChooser");
-                repaint();
+                update();
             }
         });
         
@@ -338,6 +341,7 @@ public class SudokuGUI extends JFrame {
         		b.setFont(FONT);
         		b.setForeground(FONT_COLOR);
         		b.setBackground(BACKGROUND_COLOR);
+        		b.setOpaque(true);
         		buttons[r][c] = b;
         		// add the button to the canvas
         		// the layout manager (the 9x9 GridLayout from a few lines earlier)
