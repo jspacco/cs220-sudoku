@@ -18,7 +18,7 @@ import java.util.Scanner;
  *
  */
 public class Sudoku {
-	int[][] board = new int[9][9];
+	private int[][] board = new int[9][9];
 	
 	public int get(int row, int col) {
 		// TODO: check for out of bounds
@@ -112,7 +112,11 @@ etc
 	}
 
 	public boolean gameOver() {
-		// TODO check that there are still open spots
+		for(int[] row: board) {
+			for(int val: row) {
+				if (val==0) return false;
+			}
+		}
 		return false;
 	}
 
