@@ -7,6 +7,7 @@ public class Testing {
 		sudoku.load("easy1.txt");
 		System.out.println(sudoku);
 		
+		//checking examples
 		System.out.println(sudoku.getLegalValues(0, 8));
 		System.out.println(sudoku.getLegalValues(6, 8));
 	}
