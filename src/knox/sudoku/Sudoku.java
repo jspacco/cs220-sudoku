@@ -1,4 +1,5 @@
 package knox.sudoku;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -41,7 +42,7 @@ public class Sudoku {
 	
 	public boolean isLegal(int row, int col, int val) {
 		// TODO: check if it's legal to put val at row, col
-		for(int i=0; i<board.length; i++) {//going the rows
+		/*for(int i=0; i<board.length; i++) {//going the rows
 			if(board[i][col] == val) 
 				return false;
 			
@@ -53,6 +54,9 @@ public class Sudoku {
 		}
 		
 		return true;
+		*/
+		//delegation, giving the work to another method that you belive works
+		return getLegalValues(row, col).contains(val);
 	}
 	
 	public Collection<Integer> getLegalValues(int row, int col) {
@@ -94,9 +98,9 @@ etc
 0 0 0 3 0 4 0 8 9
 
  */
-	public void load(String filename) {
+	public void load(File file) {
 		try {
-			Scanner scan = new Scanner(new FileInputStream(filename));
+			Scanner scan = new Scanner(file);
 			// read the file
 			for (int r=0; r<9; r++) {
 				for (int c=0; c<9; c++) {
@@ -107,6 +111,10 @@ etc
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public void load(String filename) {
+		load(new File(filename));
 	}
 	
 	/**
@@ -138,9 +146,23 @@ etc
 		return result;
 	}
 	
+	
+	
+	public String toFileString() {
+		String result = "";
+		for (int r=0; r<9; r++) {
+			for (int c=0; c<9; c++) {
+				int val = get(r, c);
+					result += val + " ";
+			}
+			result += "\n";
+		}
+		return result;
+	}
+	
 	public static void main(String[] args) {
 		Sudoku sudoku = new Sudoku();
-		sudoku.load("easy1.txt");
+		sudoku.load("starter");
 		System.out.println(sudoku);
 		
 		Scanner scan = new Scanner(System.in);
@@ -167,6 +189,17 @@ etc
 		return true;
 	}
 
+	public boolean didIWin() {
+		if(!gameOver()) return false;
+		for(int r=0; r<9; r++) {
+			for(int c=0; c<9; c++) {
+				if(!isLegal(r,c, board[r][c]))
+					return false;
+			}
+		}
+		return true;
+	}
+	
 	public boolean isBlank(int row, int col) {
 		return board[row][col] == 0;
 	}
