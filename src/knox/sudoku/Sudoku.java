@@ -22,12 +22,6 @@ public class Sudoku {
 	
 	public int get(int row, int col) {
 		// TODO: check for out of bounds
-		if(row < 0)&&(row > 8) {
-		throw(IndexOutOfBoundsException){
-			
-		}catch((IndexOutOfBoundsException error)
-			
-		}
 		return board[row][col];
 	}
 	
@@ -38,19 +32,7 @@ public class Sudoku {
 	
 	public boolean isLegal(int row, int col, int val) {
 		// TODO: check if it's legal to put val at row, col
-		int gridrow = row/3;
-		int gridcol = col/3;
-		int currrow = gridrow*3;
-		int currcol = gridcol*3;
-		if(currrow == 0) {
-			for(int i=0; i<3; i++) {
-				if(i = val) {
-					return false; 
-				}
-			}
-		}
-		
-		return true;
+		return true; 
 	}
 	
 	public Collection<Integer> getLegalValues(int row, int col) {
