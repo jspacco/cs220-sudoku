@@ -22,8 +22,12 @@ public class Util {
 	 * @param text
 	 */
 	public static void writeToFile(String filename, String text) {
+		writeToFile(new File(filename), text);
+	}
+	
+	public static void writeToFile(File file, String text) {
 		try {
-			PrintStream out = new PrintStream(new File(filename));
+			PrintStream out = new PrintStream(file);
 			out.print(text);
 			out.flush();
 			out.close();
@@ -39,7 +43,11 @@ public class Util {
 	 * @param filename
 	 * @return
 	 */
-	public static String readFromFile(String filename) {
+	public static void readFile (String file) {
+		readFromFile(new File(file));
+	}
+	
+	public static String readFromFile(File filename) {
 		try {
 			StringBuilder result = new StringBuilder();
 			Scanner scanner = new Scanner(new FileInputStream(filename));
