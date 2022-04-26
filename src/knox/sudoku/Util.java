@@ -33,7 +33,6 @@ public class Util {
 	 */
 	public static void writeToFile(File file, String text) {
 		try {
-			PrintStream out = new PrintStream(new File(filename));
 			PrintStream out = new PrintStream(file);
 			out.print(text);
 			out.flush();
@@ -57,7 +56,6 @@ public class Util {
 	public static String readFromFile(File file) {
 		try {
 			StringBuilder result = new StringBuilder();
-			Scanner scanner = new Scanner(new FileInputStream(filename));
 			Scanner scanner = new Scanner(file);
 			while (scanner.hasNextLine()) {
 				result.append(scanner.nextLine());

@@ -22,7 +22,6 @@ import java.util.Set;
  *
  */
 public class Sudoku {
-	int[][] board = new int[9][9];
 	private int[][] board = new int[9][9];
 	
 	public int get(int row, int col) {
@@ -43,13 +42,11 @@ public class Sudoku {
 	
 	public boolean isLegal(int row, int col, int val) {
 		// TODO: check if it's legal to put val at row, col
-		return true;
 		return getLegalValues(row, col).contains(val);
 	}
 	
 	public Collection<Integer> getLegalValues(int row, int col) {
 		// TODO: return only the legal values that can be stored at the given row, col
-		return new LinkedList<>();
 		// get all values that don't show up in:
 		// the same row as row:
 		// or same col as col
@@ -83,10 +80,8 @@ etc
 0 0 0 3 0 4 0 8 9
 
  */
-	public void load(String filename) {
 	public void load(File file) {
 		try {
-			Scanner scan = new Scanner(new FileInputStream(filename));
 			Scanner scan = new Scanner(new FileInputStream(file));
 			// read the file
 			for (int r=0; r<9; r++) {
@@ -166,7 +161,6 @@ etc
 
 	public boolean gameOver() {
 		// TODO check that there are still open spots
-		return false;
 		for (int[] row : board) {
 			for (int val : row) {
 				if (val == 0) return false;

@@ -178,7 +178,6 @@ public class SudokuGUI extends JFrame {
     private void update() {
     	for (int row=0; row<numRows; row++) {
     		for (int col=0; col<numCols; col++) {
-    			if (row == currentRow && col == currentCol && sudoku.isBlank(row, col)) {
     			if (hintRow == row && hintCol == col) {
     				buttons[row][col].setBackground(Color.pink);
     				setText(row, col, "");
@@ -186,9 +185,6 @@ public class SudokuGUI extends JFrame {
     				// draw this grid square special!
     				// this is the grid square we are trying to enter value into
     				buttons[row][col].setForeground(Color.RED);
-    				// I can't figure out how to change the background color of a grid square, ugh
-    				// Maybe I should have used JLabel instead of JButton?
-    				buttons[row][col].setBackground(Color.CYAN);
     				// added different colors depending on where you click on the gui.
     				if (row < 3 && col < 3) {
     					buttons[row][col].setBackground(Color.CYAN);
@@ -262,15 +258,6 @@ public class SudokuGUI extends JFrame {
         addToMenu(file, "Save", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	// TODO: save the current game to a file!
-            	// HINT: Check the Util.java class for helpful methods
-            	// HINT: check out JFileChooser
-            	// https://docs.oracle.com/javase/tutorial/uiswing/components/filechooser.html
-            	JOptionPane.showMessageDialog(null,
-            		    "TODO: save the current game to a file!\n"
-            		    + "HINT: Check the Util.java class for helpful methods"
-            		    + "HINT: Check out JFileChooser");
-                repaint();
             	String board = sudoku.toFileString();
             	
             	JFileChooser jfc = new JFileChooser(new File("."));
@@ -292,15 +279,6 @@ public class SudokuGUI extends JFrame {
         addToMenu(file, "Load", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-            	// TODO: load a saved game from a file
-            	// HINT: Check the Util.java class for helpful methods
-            	// HINT: check out JFileChooser
-            	// https://docs.oracle.com/javase/tutorial/uiswing/components/filechooser.html
-            	JOptionPane.showMessageDialog(null,
-            		    "TODO: load a saved game from a file\n"
-            		    + "HINT: Check the Util.java class for helpful methods\n"
-            		    + "HINT: Check out JFileChooser");
-                repaint();
             	JFileChooser jfc = new JFileChooser(new File("."));
             	
             	int returnValue = jfc.showSaveDialog(null);
@@ -316,6 +294,8 @@ public class SudokuGUI extends JFrame {
                 update();
             }
         });
+        
+        
         
         //
         // Help menu
