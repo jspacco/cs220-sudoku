@@ -1,9 +1,12 @@
 package knox.sudoku;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Scanner;
+import java.util.*;
 
 /**
  * 
@@ -32,11 +35,26 @@ public class Sudoku {
 	
 	public boolean isLegal(int row, int col, int val) {
 		// TODO: check if it's legal to put val at row, col
-		return true; 
+		return getLegalValues(row, col).contains(val); 
 	}
 	
 	public Collection<Integer> getLegalValues(int row, int col) {
 		// TODO: return only the legal values that can be stored at the given row, col
+		Set<Integer> result = new HashSet<>(Arrays.asList(1,2,3,4,5,6,7,8,9));
+		
+		for(int i=0; i<9; i++) {
+			result.remove(board[row][i]);
+			result.remove(board[i][col]);
+		}
+		
+		int rstart = row / 3 *3;
+		int cstart = col / 3 *3;
+		for(int r=rstart; r<rstart+3; r++) {
+			for(int c=cstart; c<cstart+3; c++) {
+				result.remove(board[r][c]);
+			}
+		}
+		
 		return new LinkedList<>();
 	}
 	
@@ -50,9 +68,9 @@ etc
 0 0 0 3 0 4 0 8 9
 
  */
-	public void load(String filename) {
+	public void load(File file) {
 		try {
-			Scanner scan = new Scanner(new FileInputStream(filename));
+			Scanner scan = new Scanner(file);
 			// read the file
 			for (int r=0; r<9; r++) {
 				for (int c=0; c<9; c++) {
@@ -63,6 +81,10 @@ etc
 		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
+	}
+	
+	public void load(String filename){
+		load(new File(filename));
 	}
 	
 	/**
@@ -88,6 +110,18 @@ etc
 				} else {
 					result += val + " ";
 				}
+			}
+			result += "\n";
+		}
+		return result;
+	}
+	
+	public String toFileString() {
+		String result = "";
+		for (int r=0; r<9; r++) {
+			for (int c=0; c<9; c++) {
+				int val = get(r, c);
+					result += val + " ";
 			}
 			result += "\n";
 		}
@@ -120,6 +154,16 @@ etc
 		return true;
 	}
 
+	public boolean didIWin() {
+		if(!gameOver()) return false;
+		for(int r=0; r<9; r++) {
+			for(int c=0; c<9; c++) {
+				if(!isLegal(r, c, board[r][c])) return false; 
+			}
+		}
+		return true;
+	}
+	
 	public boolean isBlank(int row, int col) {
 		return board[row][col] == 0;
 	}
