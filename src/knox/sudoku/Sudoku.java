@@ -209,7 +209,7 @@ etc
 	public boolean checkWin () {
 		for (int i = 0; i < 9; i++) {
 			for (int j = 0; j < 9; j++) {
-				if (getLegalValues(i, j).size() == 0) return false;
+				if (isBlank(i, j) && getLegalValues(i, j).size() == 0) return false;
 			}
 		}
 		return true;
