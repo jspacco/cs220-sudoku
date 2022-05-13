@@ -21,9 +21,9 @@ public class Util {
 	 * @param filename
 	 * @param text
 	 */
-	public static void writeToFile(String filename, String text) {
+	public static void writeToFile(File file, String text) {
 		try {
-			PrintStream out = new PrintStream(new File(filename));
+			PrintStream out = new PrintStream(file);
 			out.print(text);
 			out.flush();
 			out.close();
@@ -39,10 +39,10 @@ public class Util {
 	 * @param filename
 	 * @return
 	 */
-	public static String readFromFile(String filename) {
+	public static String readFromFile(File file) {
 		try {
 			StringBuilder result = new StringBuilder();
-			Scanner scanner = new Scanner(new FileInputStream(filename));
+			Scanner scanner = new Scanner(file);
 			while (scanner.hasNextLine()) {
 				result.append(scanner.nextLine());
 				result.append("\n");

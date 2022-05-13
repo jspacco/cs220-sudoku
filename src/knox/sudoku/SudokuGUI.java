@@ -10,9 +10,11 @@ import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -51,7 +53,8 @@ public class SudokuGUI extends JFrame {
     // the current row and column we are potentially putting values into
     private int currentRow = -1;
     private int currentCol = -1;
-
+    private int hintRow=-1;
+    private int hintCol=-1;
     
     // figuring out how big to make each button
     // honestly not sure how much detail is needed here with margins
@@ -94,7 +97,11 @@ public class SudokuGUI extends JFrame {
 				int digit = key - '0';
 				System.out.println(key);
 				if (currentRow == row && currentCol == col) {
-					sudoku.set(row, col, digit);
+					if (!sudoku.isLegal(row, col, digit)) {
+						JOptionPane.showMessageDialog(null,String.format("%d cannot go in row %d and col %d", digit, row ,col));
+					} else {
+						sudoku.set(row, col, digit);
+					}
 				}
 				update();
 			}
@@ -114,7 +121,8 @@ public class SudokuGUI extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			//System.out.printf("row %d, col %d, %s\n", row, col, e);
 			JButton button = (JButton)e.getSource();
-			
+			hintRow=-1;
+			hintCol=-1;
 			if (row == currentRow && col == currentCol) {
 				currentRow = -1;
 				currentCol = -1;
@@ -156,7 +164,11 @@ public class SudokuGUI extends JFrame {
     private void update() {
     	for (int row=0; row<numRows; row++) {
     		for (int col=0; col<numCols; col++) {
-    			if (row == currentRow && col == currentCol && sudoku.isBlank(row, col)) {
+    			if(hintRow==row&&hintCol==col) {
+    				buttons[row][col].setBackground(Color.LIGHT_GRAY);
+    				setText(row,col,"");
+    			}
+    			else if (row == currentRow && col == currentCol && sudoku.isBlank(row, col)) {
     				// draw this grid square special!
     				// this is the grid square we are trying to enter value into
     				buttons[row][col].setForeground(Color.RED);
@@ -203,6 +215,14 @@ public class SudokuGUI extends JFrame {
         addToMenu(file, "Save", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	String board = sudoku.toFileString();
+            	JFileChooser jfc = new JFileChooser(new File("."));
+            	int returnValue = jfc.showSaveDialog(null);
+            	if(returnValue==JFileChooser.APPROVE_OPTION) {
+            		File selectedFile= jfc.getSelectedFile();
+            		Util.writeToFile(selectedFile,board); 
+            		System.out.println(selectedFile.getAbsolutePath());
+            	}
             	// TODO: save the current game to a file!
             	// HINT: Check the Util.java class for helpful methods
             	// HINT: check out JFileChooser
@@ -218,6 +238,14 @@ public class SudokuGUI extends JFrame {
         addToMenu(file, "Load", new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+            	JFileChooser jfc = new JFileChooser(new File("."));
+            	int returnValue = jfc.showOpenDialog(null);
+            	if (returnValue==JFileChooser.APPROVE_OPTION){
+            		File selectedFile = jfc.getSelectedFile();
+            		String board = Util.readFromFile(selectedFile);
+            		sudoku.load(selectedFile);
+            		System.out.println(selectedFile.getAbsolutePath());
+            		}
             	// TODO: load a saved game from a file
             	// HINT: Check the Util.java class for helpful methods
             	// HINT: check out JFileChooser
@@ -239,6 +267,16 @@ public class SudokuGUI extends JFrame {
         addToMenu(help, "Hint", new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				for(int r=0;r<9;r++) {
+					for(int c=0;c<9;c++) {
+						if (sudoku.isBlank(r, c)&&sudoku.getLegalValues(r, c).size()==1) {
+							hintRow=r;
+							hintCol=c;
+							update();
+							return;
+						}
+					}
+				}
 				JOptionPane.showMessageDialog(null, "Give the user a hint! Highlight the most constrained square\n" + 
 						"which is the square where the fewest posssible values can go");
 			}
