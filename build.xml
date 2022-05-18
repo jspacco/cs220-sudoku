@@ -1,0 +1,26 @@
+<project name="cs220-sudoku" default="run">
+	<property name="build.dir" value="bin"/>
+	<property name="src.dir" value="src"/>
+
+
+	<target name="compile">
+		<mkdir dir="${build.dir}"/>
+		<javac srcdir="${src.dir}" destdir="${build.dir}" includeantruntime="false"/>
+	</target>
+	
+	<target name="run" depends="compile">
+		<java classname="knox.sudoku.SudokuGUI" fork="true">
+		 	<classpath>
+			    <pathelement location="${build.dir}"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="text" depends="compile">
+		<java classname="knox.sudoku.Sudoku" fork="true">
+		 	<classpath>
+			    <pathelement location="${build.dir}"/>
+			</classpath>
+		</java>
+	</target>
+</project>
