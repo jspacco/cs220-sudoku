@@ -25,11 +25,17 @@ public class Sudoku {
 	
 	public int get(int row, int col) {
 		// TODO: check for out of bounds
+		if((row < 0 || row > 8) || (col < 0 || col >8)) {
+			throw new IndexOutOfBoundsException();
+		}
 		return board[row][col];
 	}
 	
 	public void set(int row, int col, int val) {
 		// TODO: make sure val is legal
+		if(val < 1 || val > 9) {
+			throw new IllegalArgumentException();
+		}
 		board[row][col] = val;
 	}
 	
@@ -55,7 +61,7 @@ public class Sudoku {
 			}
 		}
 		
-		return new LinkedList<>();
+		return result;
 	}
 	
 /**
@@ -70,15 +76,15 @@ etc
  */
 	public void load(File file) {
 		try {
-			Scanner scan = new Scanner(file);
+			Scanner scan = new Scanner(new FileInputStream(file));
 			// read the file
 			for (int r=0; r<9; r++) {
 				for (int c=0; c<9; c++) {
-					int val = scan.nextInt();
-					board[r][c] = val;
+				 int val = scan.nextInt();
+				 board[r][c] = val;
 				}
 			}
-		} catch (IOException e) {
+		}catch(IOException e){
 			throw new RuntimeException(e);
 		}
 	}
@@ -102,12 +108,12 @@ etc
 	 */
 	public String toString() {
 		String result = "";
-		for (int r=0; r<9; r++) {
-			for (int c=0; c<9; c++) {
-				int val = get(r, c);
-				if (val == 0) {
-					result += "_ ";
-				} else {
+		for(int r  = 0; r<9; r++) {
+			for(int c =0; c<9; c++) {
+				int val = get(r,c);
+				if(val ==0){
+					result += " ";
+				}else {
 					result += val + " ";
 				}
 			}

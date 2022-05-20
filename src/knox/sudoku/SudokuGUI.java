@@ -64,6 +64,8 @@ public class SudokuGUI extends JFrame {
     private int hintCol = -1;
     
     private boolean showLegalValues = false; 
+    
+    private int guess = -1;
 
     
     // figuring out how big to make each button
@@ -110,12 +112,13 @@ public class SudokuGUI extends JFrame {
 					if(!sudoku.isLegal(row,  col,  digit)) {
 						JOptionPane.showMessageDialog(null, 
 								String.format("%d cannot go in row %d and col %ed", digit, row, col));
-					}else {
+						}else {
 					sudoku.set(row, col, digit);
 				}
-				update();
 			}
+				update();
 		}
+    }
     }
     
     private class ButtonListener implements ActionListener {
@@ -187,6 +190,30 @@ public class SudokuGUI extends JFrame {
     				// I can't figure out how to change the background color of a grid square, ugh
     				// Maybe I should have used JLabel instead of JButton?
     				buttons[row][col].setBackground(Color.CYAN);
+    				if(row < 3 && col <3) {
+    					buttons[row][col].setBackground(Color.BLUE);
+    				}
+    				if(row<3 && (col >5 && col<9)) {
+    					buttons[row][col].setBackground(Color.YELLOW);
+    				}
+    				if(row>3 && row<6 && col<3){
+    					buttons[row][col].setBackground(Color.GREEN);
+    				}
+    				if((row>2 && row<6 ) && (col>2 && col<6)) {
+    					buttons[row][col].setBackground(Color.WHITE);
+    				}
+    				if((row>2 && row<6) && (col>5 && col<9)) {
+    					buttons[row][col].setBackground(Color.RED);
+    				}
+    				if((row>5 && row<9) && col<3) {
+    					buttons[row][col].setBackground(Color.GRAY);
+    				}
+    				if((row>5 && row<9) && (col>2 && col<5)) {
+    					buttons[row][col].setBackground(Color.ORANGE);
+    				}
+    				if((row>5 && row<9) && (col>5 && col<9)) {
+    					buttons[row][col].setBackground(Color.MAGENTA);
+    				}
     				setText(row, col, "_");
     				if(showLegalValues) {
     					Collection<Integer> legals = sudoku.getLegalValues(row, col);
@@ -205,6 +232,9 @@ public class SudokuGUI extends JFrame {
     	}
     	}
     	repaint();
+    	if(sudoku.didIWin()) {
+    		JOptionPane.showMessageDialog(null, "Your intelligence is unparalled");
+    	}
     }
     
 	
@@ -224,7 +254,7 @@ public class SudokuGUI extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 sudoku.load("easy1.txt");
-                update();
+                repaint();
             }
         });
         
@@ -323,12 +353,7 @@ public class SudokuGUI extends JFrame {
         
         this.setJMenuBar(menuBar);
     }
-    
-    
-    private void setJMenuBar(JMenuBar menuBar) {
-		// TODO Auto-generated method stub
-		
-	}
+   
 
 	/**
      * Private helper method to put 
@@ -402,7 +427,6 @@ public class SudokuGUI extends JFrame {
         		b.setFont(FONT);
         		b.setForeground(FONT_COLOR);
         		b.setBackground(BACKGROUND_COLOR);
-        		b.setOpaque(true);
         		buttons[r][c] = b;
         		// add the button to the canvas
         		// the layout manager (the 9x9 GridLayout from a few lines earlier)
@@ -455,51 +479,10 @@ public class SudokuGUI extends JFrame {
         update();
         repaint();
     }
-    
-    private void setDefaultCloseOperation(int exitOnClose) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void setFocusable(boolean b) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void setLocation(int i, int j) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void pack() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void setResizable(boolean b) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private void setPreferredSize(Dimension dimension) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	private Container getContentPane() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	private void setSize(int width, int height) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	public static void main(String[] args) {
-        SudokuGUI g = new SudokuGUI();
-        g.setVisible(true);
+    	SudokuGUI g = new SudokuGUI();
+    	g.setVisible(true);
     }
-
 }
- }
+
