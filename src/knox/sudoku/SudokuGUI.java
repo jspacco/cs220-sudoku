@@ -6,13 +6,17 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.util.Collection;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -51,6 +55,11 @@ public class SudokuGUI extends JFrame {
     // the current row and column we are potentially putting values into
     private int currentRow = -1;
     private int currentCol = -1;
+    
+    private int hintRow =-1;
+    private int hintCol= -1;
+    
+    private boolean showLegalValues= false;
 
     
     // figuring out how big to make each button
@@ -64,7 +73,7 @@ public class SudokuGUI extends JFrame {
     // for lots of fun, too much fun really, try "Wingdings"
     private static Font FONT = new Font("Verdana", Font.BOLD, 40);
     private static Color FONT_COLOR = Color.BLACK;
-    private static Color BACKGROUND_COLOR = Color.GRAY;
+    private static Color BACKGROUND_COLOR = Color.WHITE;
     
     // the canvas is a panel that gets drawn on
     private JPanel panel;
@@ -94,6 +103,12 @@ public class SudokuGUI extends JFrame {
 				int digit = key - '0';
 				System.out.println(key);
 				if (currentRow == row && currentCol == col) {
+					if(!sudoku.isLegal(row, col, digit)) {
+						//error
+						JOptionPane.showMessageDialog(null,String.format("%d cannot go in row %d and col %d", digit, row, col ));
+					}else {
+						sudoku.set(row, col, digit);
+					}
 					sudoku.set(row, col, digit);
 				}
 				update();
@@ -115,6 +130,9 @@ public class SudokuGUI extends JFrame {
 			//System.out.printf("row %d, col %d, %s\n", row, col, e);
 			JButton button = (JButton)e.getSource();
 			
+			hintRow=-1;
+			hintCol=-1;
+			
 			if (row == currentRow && col == currentCol) {
 				currentRow = -1;
 				currentCol = -1;
@@ -127,6 +145,8 @@ public class SudokuGUI extends JFrame {
 				// A simple way to do this is to take keyboard input
 				// or you can cycle through possible legal values with each click
 				// or pop up a selector with only the legal valuess
+				
+				
 				
 			} else {
 				// TODO: error dialog letting the user know that they cannot enter values
@@ -156,14 +176,24 @@ public class SudokuGUI extends JFrame {
     private void update() {
     	for (int row=0; row<numRows; row++) {
     		for (int col=0; col<numCols; col++) {
-    			if (row == currentRow && col == currentCol && sudoku.isBlank(row, col)) {
-    				// draw this grid square special!
+    			if (hintRow==row && hintCol==col ) {
+    				buttons[row][col].setBackground(Color.pink);
+    				setText(row,col,"");
+    			} else if (row == currentRow && col == currentCol ) {
+    				if(sudoku.isBlank(row, col)) {
+    					// draw this grid square special!
     				// this is the grid square we are trying to enter value into
     				buttons[row][col].setForeground(Color.RED);
     				// I can't figure out how to change the background color of a grid square, ugh
     				// Maybe I should have used JLabel instead of JButton?
     				buttons[row][col].setBackground(Color.CYAN);
     				setText(row, col, "_");
+    				if (showLegalValues) {
+    					Collection<Integer> legals= sudoku.getLegalValues(row,col);
+    					JOptionPane.showMessageDialog(null,legals.toString());
+    				}
+    				}
+    				
     			} else {
     				buttons[row][col].setForeground(FONT_COLOR);
     				buttons[row][col].setBackground(BACKGROUND_COLOR);
@@ -239,11 +269,55 @@ public class SudokuGUI extends JFrame {
         addToMenu(help, "Hint", new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				for(int r=0;r<9;r++) {
+					for(int c=0;c<9;c++) {
+						if(sudoku.isBlank(r,c) && sudoku.getLegalValues(r, c).size()==1) {
+							hintRow=r;
+							hintCol=c;
+							update();
+							return;
+						}
+					}
+				}
 				JOptionPane.showMessageDialog(null, "Give the user a hint! Highlight the most constrained square\n" + 
 						"which is the square where the fewest posssible values can go");
 			}
+			
+			//JMenu help = new JMenu("Show Legal Values");
+			
 		});
         
+        // make one that encourages 
+        
+        addToMenu(help, "Encouragment", new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent g) {
+				
+				JOptionPane.showMessageDialog(null, "You can do it! I believe in you!");
+			}
+			
+			
+			
+		});
+        addToMenu(help, "Rules", new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent h) {
+				
+				JOptionPane.showMessageDialog(null, "Rule 1 - Each row must contain the numbers from 1 to 9, without repetitions. Rule 2 - Each column must contain the numbers from 1 to 9, without repetitions. Rule 3 - The digits can only occur once per block. Rule 4 - The sum of every single row, column and nonet must equal 45");
+			}
+			
+			
+			
+		});
+        
+        JMenuItem menuItem = new JCheckBoxMenuItem("Show Legals");
+    	help.add(menuItem);
+    	menuItem.addItemListener(new ItemListener(){
+        	@Override
+        	public void itemStateChanged(ItemEvent e){
+        		showLegalValues=!showLegalValues;
+        	}
+        });
         this.setJMenuBar(menuBar);
     }
     
